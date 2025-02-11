@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from datetime import datetime
 from src.data_collector import StockDataCollector
+from src.data_preprocessor import DataPreprocessor
+from src.model import StockPricePredictor
 
 # Set the time period for data
 start_date = datetime(2015, 1, 1)
@@ -22,18 +24,18 @@ print(df.head())
 plt.style.use('fivethirtyeight')
 %matplotlib inline
 
-# StockDataCollector object එකක් සාදනවා
+# StockDataCollector object 
 collector = StockDataCollector()
 
-# දත්ත ලබා ගැනීමේ parameters
-symbol = 'AAPL'  # Apple සමාගම
-start = datetime(2020, 1, 1)  # 2020 ජනවාරි 1 සිට
-end = datetime.now()  # අද දක්වා
+# get stock data
+symbol = 'AAPL'  # apple stock
+start = datetime(2020, 1, 1)  # from 2020
+end = datetime.now()  # till now
 
-# දත්ත ලබා ගන්නවා
+# get stock data
 data = collector.get_stock_data(symbol, start, end)
 
-# මුල් පේළි 5 පෙන්වනවා
+# print first 5 rows of data
 print("\nFirst 5 rows of data:")
 print(data.head())
 
@@ -44,5 +46,29 @@ start = datetime(2015, 1, 1)
 end = datetime(2025, 1, 1)
 
 df = data.DataReader('AAPL', 'yahoo', start, end)
+
+def main():
+    # Initialize components
+    collector = StockDataCollector()
+    preprocessor = DataPreprocessor()
+    
+    # Get data
+    symbol = 'AAPL'
+    start_date = datetime(2020, 1, 1)
+    end_date = datetime.now()
+    
+    # Collect and preprocess data
+    df = collector.get_stock_data(symbol, start_date, end_date)
+    scaled_data, scaler = preprocessor.prepare_data(df)
+    X, y = preprocessor.create_sequences(scaled_data)
+    
+    # Create and train model
+    model = StockPricePredictor(sequence_length=60, n_features=5)
+    history = model.train(X, y, epochs=10)  # Using 10 epochs for testing
+    
+    print("Model training completed!")
+
+if __name__ == "__main__":
+    main()
 
 
