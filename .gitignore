@@ -1,25 +1,22 @@
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.so
-.Python
-venv/
-
-# Data
+# Data files
 data/raw/*
 *.csv
 
-# IDEs
+# Model files
+models/
+*.h5
+*.pkl
+
+# Python
+__pycache__/
+*.py[cod]
+venv/
+
+# IDE
 .vscode/
 .idea/
 
 # Jupyter
 .ipynb_checkpoints
 
-.env
-
-# Add model files
-models/
-*.h5
-*.pkl 
+.env 
