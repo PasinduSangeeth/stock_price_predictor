@@ -1,12 +1,12 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime, timedelta
-from data_collector import StockDataCollector
-from data_preprocessor import DataPreprocessor
-from model import StockPricePredictor
-from model_manager import ModelManager
 import os
 import matplotlib.pyplot as plt
+from src.data_collector import StockDataCollector
+from src.data_preprocessor import DataPreprocessor
+from src.model import StockPricePredictor
+from src.model_manager import ModelManager
 
 class StockPredictorApp:
     def __init__(self):
@@ -69,18 +69,31 @@ class StockPredictorApp:
     
     def get_latest_model(self, symbol: str):
         """Get the latest model files for the symbol if they exist"""
-        model_dir = self.model_manager.models_dir
-        model_files = [f for f in os.listdir(model_dir) if f.startswith(symbol)]
-        if model_files:
-            # Get model and scaler files separately
-            model_files = sorted([f for f in model_files if f.endswith('.h5')])
-            scaler_files = sorted([f for f in model_files if f.endswith('.pkl')])
+        try:
+            model_dir = self.model_manager.models_dir
+            if not os.path.exists(model_dir):
+                os.makedirs(model_dir)
+                return None, None
+            
+            # Get all files for this symbol
+            all_files = [f for f in os.listdir(model_dir) if f.startswith(symbol)]
+            if not all_files:
+                return None, None
+            
+            # Separate model and scaler files
+            model_files = [f for f in all_files if f.endswith('.h5')]
+            scaler_files = [f for f in all_files if f.endswith('.pkl')]
             
             if model_files and scaler_files:
-                latest_model = os.path.join(model_dir, model_files[-1])
-                latest_scaler = os.path.join(model_dir, scaler_files[-1])
+                latest_model = os.path.join(model_dir, sorted(model_files)[-1])
+                latest_scaler = os.path.join(model_dir, sorted(scaler_files)[-1])
                 return latest_model, latest_scaler
-        return None, None
+            
+            return None, None
+        
+        except Exception as e:
+            print(f"Error in get_latest_model: {str(e)}")
+            return None, None
     
     def plot_stock_data(self, df: pd.DataFrame, prediction: float):
         """Plot stock data with prediction"""

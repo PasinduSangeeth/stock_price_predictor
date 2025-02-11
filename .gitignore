@@ -17,4 +17,9 @@ data/raw/*
 # Jupyter
 .ipynb_checkpoints
 
-.env 
+.env
+
+# Add model files
+models/
+*.h5
+*.pkl 

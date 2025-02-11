@@ -43,4 +43,4 @@ class ModelManager:
         # Load scaler
         scaler = joblib.load(scaler_path)
         
-        return predictor, scaler 
+        return predictor, scaler

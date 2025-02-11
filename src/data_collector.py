@@ -12,20 +12,11 @@ class StockDataCollector:
         os.makedirs(self.data_dir, exist_ok=True)
     
     def get_stock_data(self, symbol: str, start_date: datetime, end_date: datetime) -> pd.DataFrame:
-        """
-        Download stock data for a given symbol and date range
-        
-        Args:
-            symbol: Stock symbol (e.g., 'AAPL' for Apple)
-            start_date: Start date for data collection
-            end_date: End date for data collection
-            
-        Returns:
-            DataFrame with stock data
-        """
+        """Get historical stock data from Yahoo Finance"""
         try:
-            print(f"Downloading data for {symbol}...")
             df = yf.download(symbol, start=start_date, end=end_date)
+            if df.empty:
+                raise ValueError(f"No data found for symbol {symbol}")
             
             # Save to CSV
             file_path = os.path.join(self.data_dir, f"{symbol}_data.csv")
@@ -36,4 +27,4 @@ class StockDataCollector:
             
         except Exception as e:
             print(f"Error downloading data for {symbol}: {str(e)}")
-            raise 
+            raise Exception(f"Error fetching data for {symbol}: {str(e)}") 
