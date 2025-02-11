@@ -6,6 +6,7 @@ from src.data_collector import StockDataCollector
 from src.data_preprocessor import DataPreprocessor
 from src.model import StockPricePredictor
 from src.evaluator import ModelEvaluator
+from src.model_manager import ModelManager
 
 def main():
     try:
@@ -15,6 +16,7 @@ def main():
         collector = StockDataCollector()
         preprocessor = DataPreprocessor()
         evaluator = ModelEvaluator()
+        model_manager = ModelManager()
         
         # Get data
         symbol = 'AAPL'
@@ -44,6 +46,15 @@ def main():
         metrics = evaluator.evaluate_predictions(y_test, y_pred)
         evaluator.plot_predictions(y_test, y_pred, title=f"{symbol} Stock Price Prediction")
         print("✓ Evaluation completed")
+        
+        print("\n5. Saving model...")
+        model_path, scaler_path = model_manager.save_model(model, scaler, symbol)
+        print("✓ Model saved successfully")
+        
+        # Test loading model
+        print("\n6. Testing model loading...")
+        loaded_model, loaded_scaler = model_manager.load_model(model_path, scaler_path)
+        print("✓ Model loaded successfully")
         
     except Exception as e:
         print(f"\nError occurred: {str(e)}")
